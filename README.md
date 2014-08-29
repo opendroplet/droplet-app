@@ -1,6 +1,7 @@
 Open Droplet Application
 ========================
 
+See [Open Droplet Hackpad - Software section](https://hackpad.com/Open-Droplet-TwGzhpxVHQB#:h=Software)
 
 # Devops
 
