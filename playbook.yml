@@ -1,0 +1,23 @@
+---
+- hosts: all
+  tasks:
+    - name: Add Open Energy Monitor repo
+      apt_repository: repo='deb http://emon-repo.s3.amazonaws.com wheezy unstable' state=present
+      sudo: true
+    - name: Update packages
+      apt: update_cache=yes
+      sudo: true
+    - name: Install EMONCMS
+      apt: pkg=emoncms state=latest
+      sudo: true
+    - name: Install Apache
+      apt: pkg=apache2 state=latest
+      sudo: true
+    - name: Enable Apache Rewrite Module
+      apache2_module: state=present name=rewrite
+      sudo: true
+    - name: Enable Apache emoncms site
+      action: command a2ensite emoncms
+      sudo: true
+    - name: Restart Apache
+      action: service name=apache2 state=restarted
