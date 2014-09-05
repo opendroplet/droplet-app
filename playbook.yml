@@ -7,17 +7,73 @@
     - name: Update packages
       apt: update_cache=yes
       sudo: true
-    - name: Install EMONCMS
-      apt: pkg=emoncms state=latest
-      sudo: true
     - name: Install Apache
       apt: pkg=apache2 state=latest
+      sudo: true
+    - apt: pkg=mysql-server state=latest
+      sudo: true
+    - apt: pkg=mysql-client state=latest
+      sudo: true
+    - apt: pkg=php5 state=latest
+      sudo: true
+    - apt: pkg=libapache2-mod-php5 state=latest
+      sudo: true
+    - apt: pkg=php5-mysql state=latest
+      sudo: true
+    - apt: pkg=php5-curl state=latest
+      sudo: true
+    - apt: pkg=php-pear state=latest
+      sudo: true
+    - apt: pkg=php5-dev state=latest
+      sudo: true
+    - apt: pkg=php5-mcrypt state=latest
+      sudo: true
+    - apt: pkg=php5-json state=latest
+      sudo: true
+    - apt: pkg=git-core state=latest
+      sudo: true
+    - apt: pkg=redis-server state=latest
+      sudo: true
+    - apt: pkg=build-essential state=latest
+      sudo: true
+    - apt: pkg=ufw state=latest
+      sudo: true
+    - apt: pkg=ntp state=latest
+      sudo: true
+    - name: Discover PEAR channels
+      command: pear channel-discover pear.swiftmailer.org
+      register: pear_channel_result
+      changed_when: "'initialized' not in pear_channel_result.stdout"
+      failed_when: "'failed' in pear_channel_result.stdout"
+      sudo: true
+    - name: Install PEAR packages
+      command: pecl install channel://pecl.php.net/dio-0.0.6 redis swift/swift
+      register: pear_package_result
+      changed_when: "'is already installed' not in pear_package_result.stdout"
+      failed_when:  "'No releases available for package' in pear_package_result.stdout"
+      sudo: true
+    - lineinfile: dest=/etc/php5/apache2/conf.d/20-dio.ini state=present line=extension=dio.so create=yes
+      sudo: true
+    - lineinfile: dest=/etc/php5/cli/conf.d/20-dio.ini state=present line=extension=dio.so create=yes
+      sudo: true
+    - lineinfile: dest=/etc/php5/apache2/conf.d/20-dio.ini state=present line=extension=redis.so create=yes
+      sudo: true
+    - lineinfile: dest=/etc/php5/cli/conf.d/20-redis.ini state=present line=extension=redis.so create=yes
+      sudo: true
+    - lineinfile: dest=/etc/apache2/sites-available/default regexp="AllowOverride None" line="AllowOverride All"
       sudo: true
     - name: Enable Apache Rewrite Module
       apache2_module: state=present name=rewrite
       sudo: true
-    - name: Enable Apache emoncms site
-      action: command a2ensite emoncms
-      sudo: true
     - name: Restart Apache
       action: service name=apache2 state=restarted
+    - git: repo=https://github.com/emoncms/emoncms.git dest=/var/www
+      sudo: true
+    - acl: name=/var/www entity=www-data etype=www-data
+      sudo: true
+    - name: ensure mysql local root password is zwx123
+      mysql_user: check_implicit_admin=True login_user=root login_password="zwx123" name=root password="zwx123" state=present
+      sudo: true
+    - file: /var/lib/phpfiwa owner=www-data group=root state=directory
+    - file: /var/lib/phpfina owner=www-data group=root state=directory
+    - file: /var/lib/phptimeseries owner=www-data group=root state=directory
