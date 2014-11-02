@@ -67,6 +67,8 @@
       sudo: true
     - name: Restart Apache
       action: service name=apache2 state=restarted
+      sudo: true
+    - file: name=/var/www owner=www-data group=root state=absent
     - git: repo=https://github.com/emoncms/emoncms.git dest=/var/www
       sudo: true
     - acl: name=/var/www entity=www-data etype=www-data
@@ -74,6 +76,6 @@
     - name: ensure mysql local root password is zwx123
       mysql_user: check_implicit_admin=True login_user=root login_password="zwx123" name=root password="zwx123" state=present
       sudo: true
-    - file: /var/lib/phpfiwa owner=www-data group=root state=directory
-    - file: /var/lib/phpfina owner=www-data group=root state=directory
-    - file: /var/lib/phptimeseries owner=www-data group=root state=directory
+    - file: name=/var/lib/phpfiwa owner=www-data group=root state=directory
+    - file: name=/var/lib/phpfina owner=www-data group=root state=directory
+    - file: name=/var/lib/phptimeseries owner=www-data group=root state=directory
