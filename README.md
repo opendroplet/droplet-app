@@ -14,7 +14,7 @@ Prerequisite
 To install the development environment run.
 
   * ```git clone https://github.com/opendroplet/droplet-hub-config.git```
-  * ```git clone https://github.com/opendroplet/emoncms.git```
+  * ```git clone -b bufferedwrite https://github.com/opendroplet/emoncms.git```
   * ```git clone https://github.com/opendroplet/droplet-hub-emoncms.git```
   * ```cd droplet-hub-emoncms```
   * ```vagrant up```
